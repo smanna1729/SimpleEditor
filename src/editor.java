@@ -597,7 +597,8 @@ JToolBar tool = new JToolBar();
 		{
 	    	try 
 	    	{
-				undo.undo();
+                if (undo.canUndo())
+                    undo.undo();
 	    	} 
 	    	catch (CannotUndoException ex) 
 	    	{
@@ -635,7 +636,8 @@ JToolBar tool = new JToolBar();
 		{
 	    	try 
 	    	{
-				undo.redo();
+                if (undo.canRedo())
+                    undo.redo();
 	    	} 
 	    	catch (CannotRedoException ex) 
 	    	{
