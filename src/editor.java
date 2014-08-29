@@ -10,6 +10,8 @@ import javax.swing.*;
 import javax.swing.event.* ;
 import javax.swing.text.*;
 
+import java.nio.file.*;
+
 public class editor extends JFrame 
 {
 	//private JTextPane area = new JTextPane( ) ;
@@ -71,11 +73,11 @@ public class editor extends JFrame
   	{
     	try 
     	{
-      		resources = ResourceBundle.getBundle("resources.Notepad", Locale.getDefault() );
+      		resources = ResourceBundle.getBundle("properties.Notepad", Locale.getDefault() );
     	} 
     	catch (MissingResourceException mre) 
     	{
-      		System.err.println("resources/Notepad.properties not found");
+      		System.err.println("properties/Notepad.properties not found");
             System.exit(1);
         }
     }
@@ -212,7 +214,37 @@ JToolBar tool = new JToolBar();
 		}
 		return null;
     }
-	
+
+	protected URL getImageResources (String key)
+    {
+        String name = getResourceString (key);
+        if (null != name)
+        {
+            try
+            {
+                // Move to folder from which it is running
+                // Sample : /Users/labuser/github/SimpleEditor/src
+                Path path = Paths.get(editor.class.getResource(".").toURI());
+                
+                // filePath -> /Users/labuser/github/SimpleEditor/resources/new.png
+                String filePath = path.getParent() + "/" + name;
+                
+                // url -> file:/Users/labuser/github/SimpleEditor/resources/new.png
+                URL url = new File(filePath).toURI().toURL();
+
+                return url;
+                
+            }
+            catch (Exception ex)
+            {
+                System.out.println ("exception..");
+            }
+            System.out.println (editor.class.getResource("."));
+        }
+
+        return null;
+    }
+    
 	private String[] tokenize ( String instruction )
 	{
 		StringTokenizer str = new StringTokenizer ( instruction ) ;
@@ -323,7 +355,7 @@ JToolBar tool = new JToolBar();
     protected JMenuItem createMenuItem(String cmd) 
     {
 		JMenuItem mi = new JMenuItem(getResourceString( cmd + labelSuffix));
-        URL url = getResource(cmd + imageSuffix);
+        URL url = getImageResources(cmd + imageSuffix);
 		if (url != null) 
 		{
 	    	mi.setHorizontalTextPosition(JButton.RIGHT);
@@ -430,7 +462,8 @@ JToolBar tool = new JToolBar();
      */
     protected JButton createToolbarButton(String key)
     {
-		URL url = getResource(key + imageSuffix);
+        URL url = getImageResources(key + imageSuffix);
+        
         JButton b = new JButton(new ImageIcon(url)) 
         {
             public float getAlignmentY() { return 0.5f; }
@@ -927,7 +960,8 @@ Action Quit = new AbstractAction("Quit") {
 			e.printStackTrace() ;
 		}
 	}
-public  static void main(String[] arg) {
+
+    public  static void main(String[] arg) {
 		new editor();
 	}
 }
